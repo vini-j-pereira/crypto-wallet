@@ -31,8 +31,8 @@ function menu() {
         rl.question("Choose your option: ", (answer) => {
             switch(answer){
                 case "1": createWallet(); break;
-                case "2": break;
-                case "3": break;
+                case "2": recoverWallet(); break;
+                case "3": getBalance(); break;
                 case "4": break;
                 case "5": break;
                 default: {
@@ -56,6 +56,35 @@ function createWallet(){
 
     console.log(`Your new Wallet:`);
     console.log(myAddress);
+    console.log("PK: " + myWallet.privateKey);
+
+    preMenu();
+}
+
+function recoverWallet(){
+    console.clear();
+    rl.question(`What is your private key or phrase mnemonic? `, (pkOrMnemonic) => {
+        const myWallet = WalletService.recoverWallet(pkOrMnemonic);
+        myAddress = myWallet.address;
+
+        console.log(`Your recovered wallet: `);
+        console.log(myAddress);
+
+        preMenu();
+    })
+}
+
+async function getBalance(){
+    console.clear();
+
+    if(!myAddress){
+        console.log(`You don't have a wallet yet!`);
+        return preMenu();
+    }
+
+    const{balanceInEth} = await WalletService.getBalance(myAddress);
+    console.log(`${SYMBOL} ${balanceInEth}`);
+
     preMenu();
 }
 
